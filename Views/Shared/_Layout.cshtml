@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="A website dedicated to indexing user-submitted emojis for Discord.">
+    <meta name="keywords" content="emoji, discord, emojis, discord emojis">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>EmojiSite</title>
+
+    <meta property="og:title" content="EmojiSite">
+    <meta property="og:site_name" content="EmojiSite">
+    <meta property="og:url" content="https://emoji.cirno.pw">
+    <meta property="og:description" content="A website that indexes user-submitted emojis for Discord. Or anything else that uses emojis, I guess.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://i.imgur.com/mmZSvnc.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+    <link rel="stylesheet" href="~/css/site.css">
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+
+    <link rel="icon" type="image/png" href="~/cir_think.png" />
+</head>
+
+<body>
+    <nav class="navbar is-dark has-shadow" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+                <p>EmojiSite</p>
+            </a>
+        </div>
+        <div class="navbar-end">
+            <a asp-action="Faq" class="navbar-item @(Context.Request.Path == "/faq" ? "is-active" : "")">
+                FAQ
+            </a>
+            <a asp-action="favorites" class="navbar-item @(Context.Request.Path == "/favorites" ? "is-active" : "")">
+            Favorites
+            </a>
+            <a asp-action="emojis" class="navbar-item @(Context.Request.Path == "/myemoji" ? "is-active" : "")">
+            My Emoji
+            </a>
+            <a asp-action="submit" class="navbar-item @(Context.Request.Path == "/submit" ? "is-active" : "")">
+            Submit Emoji
+            </a>
+            <div class="navbar-item">
+                    <p class="control">
+                        <div class="@(User.Identity.IsAuthenticated ? "dropdown" : "")">
+                            <div class="dropdown-trigger">
+                                    <button class="is-white button" onclick="@(!User.Identity.IsAuthenticated ? $"location.href='{Url.Action("login")}'" : "")">
+                                        @if (User.Identity.IsAuthenticated)
+                                        {
+                                            @if (User.FindFirstValue("urn:discord:avatar") != null)
+                                            {
+                                                <img class="image is-24x24" src="https://cdn.discordapp.com/avatars/@User.FindFirstValue(ClaimTypes.NameIdentifier)/@(User.FindFirstValue("urn:discord:avatar")).png">
+                                            }
+                                            else
+                                            {
+                                                <img class="image is-24x24" src="~/images/discord-logo.png">
+                                            }
+
+                                            <text>&nbsp</text>
+                                            <span>
+                                                @User.FindFirstValue(ClaimTypes.Name)#@User.FindFirstValue("urn:discord:discriminator")
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <img class="image is-24x24" src="~/images/discord-logo.png">
+                                            <text>&nbsp</text>
+                                            <span>
+                                                Sign in with Discord
+                                            </span>
+                                        }
+                                    </button>
+                            </div>
+                            <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                                <div class="dropdown-content">
+                                    @if (HomeController.Admins.Contains(User.FindFirstValue(ClaimTypes.NameIdentifier)))
+                                    {
+                                        <a asp-action="approval" class="dropdown-item">Administrator</a>
+                                    }
+                                    <a asp-action="logout" class="dropdown-item">
+                                        Logout
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </p>
+            </div>
+        </div>
+    </nav>
+    
+    <section class="section">
+        @RenderBody()
+    </section>
+    <footer class="footer">
+        <div class="container">
+            <div class="content has-text-centered">
+                <p>
+                    <b>EmojiSite</b> by ExtraConcentratedJuice, built with ASP.NET Core 2.0. (using roundabout, unorthodox methods)
+                    <br />
+                    Copyright? What copyright?
+                </p>
+            </div>
+        </div>
+    </footer>
+    @RenderSection("Scripts", required: false)
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+    <script src="~/js/site.js"></script>
+</body>
+</html>

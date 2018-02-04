@@ -1,0 +1,96 @@
+﻿@{
+    ViewData["Title"] = "Submit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string url = (string)TempData["url"] ?? "";
+    string name = (string)TempData["name"] ?? "";
+    string description = (string)TempData["description"] ?? "";
+    string[] tagList = (string[])TempData["tagList"] ?? new string[0];
+}
+<div class="container">
+    <p class="title">Submit an Emoji</p>
+    <p class="subtitle">You can submit an emoji or whatever I guess. Just make sure it's decent.</p>
+    <p><b>Submission Guidelines:</b></p>
+    <ol style="margin-left: 2%;">
+        <li>All content must be SFW (Safe for work).</li>
+        <li>All images must be linked directly with an approved imagehost, listed below.</li>
+        <li>All images must be LESS THAN 200kb in size.</li>
+        <li>The image MUST be in PNG format for a static image; it must be in GIF format for an animated image. A transparent background is preferred.</li>
+    </ol>
+    <p><b>Approved Imagehosts</b></p>
+    <ul style="margin-left: 1%;">
+        <li><a href="https://imgur.com">https://imgur.com</a> (Get direct URL by rightclicking on uploaded image and pressing "Copy Image Location")</li>
+        <li><a href="https://mixtape.moe">https://mixtape.moe</a> (GIF friendly, preferred for GIF images.)</li>
+        <li><a href="http://magaimg.net">http://magaimg.net</a> (GIF friendly)</li>
+    </ul>
+    <br />
+    @{ string message = TempData["Message"] as string; }
+
+    @if (message != null)
+    {
+        if (message.StartsWith("Success"))
+        {
+            <p class="has-text-success">@message</p>
+        }
+        else
+        {
+            <p class="has-text-danger">@message</p>
+        }
+
+    }
+
+    <form asp-controller="Home" asp-action="SubmitHandler" method="POST">
+        <div class="field">
+            <label class="label">Emoji Name</label>
+            <div class="control">
+                <input class="input" type="text" placeholder="meme" name="name" value="@name">
+            </div>
+            <p class="help">Emoji names must be alphanumeric with the exception of the hyphen character (-), no longer than 32 characters, and at least 3 characters long.</p>
+        </div>
+
+        <div class="field">
+            <label class="label">Image URL</label>
+            <div class="control">
+                <input class="input" type="text" placeholder="https://i.imgur.com/myimghere.png" name="url" value="@url">
+            </div>
+            <p class="help">This is the URL to your image; please supply a direct link. Your emoji will be denied if you do not supply a direct URL to the image.</p>
+        </div>
+
+        <div class="field">
+            <label class="label">Description</label>
+            <div class="control">
+                <textarea class="textarea" placeholder="Lorem memeum ipsum." name="description">@description</textarea>
+            </div>
+            <p class="help">Your description goes here. Keep it short and consice. Your description may be no longer than 128 characters and no shorter than 3 characters.</p>
+
+        </div>
+        <div class="field">
+            <label class="label">Tags</label>
+            <p class="help">Select all tags that apply.</p>
+
+            @foreach (string s in (List<string>)ViewData["Tags"])
+            {
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="tags" value="@s" @if (tagList.Contains(s)) { <text>checked</text> }>
+                        @s.Replace("_", " ")
+                    </label>
+                </div>
+            }
+        </div>
+
+        <recaptcha />
+        @Html.AntiForgeryToken()
+
+        <br />
+
+        <div class="field">
+            <div class="control">
+                <button type="submit" value="Submit" class="button is-link">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+<recaptcha-script />
+

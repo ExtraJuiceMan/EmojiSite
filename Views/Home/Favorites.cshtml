@@ -1,0 +1,63 @@
+﻿
+@{
+    ViewData["Title"] = "Favorites";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<EmojiRow> emojis = (List<EmojiRow>)ViewData["Emojis"];
+}
+
+<p class="title">My Favorites</p>
+@if (emojis.Count() > 0)
+{
+    @foreach (EmojiRow r in emojis)
+    {
+        <div class="columns">
+            @foreach (EmojiInfo e in r.Row)
+            {
+                <div class="column is-one-quarter">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">
+                                :@e.Emoji.Name:
+                            </p>
+                            <a href="#" class="card-header-icon info-button" aria-label="details">
+                                <span class="icon">
+                                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                </span>
+                            </a>
+                        </header>
+                        <div class="card-content collapsed-content">
+                            <div class="content is-size-7">
+                                Author: <b>@e.Author.Username</b>
+                                <br />
+                                Tags:
+                                <div class="tags">
+                                    @foreach (string t in e.Emoji.TagsToArray())
+                                    {
+                                        <span class="tag">
+                                            @t
+                                        </span>
+                                    }
+                                </div>
+                                <a href="#" class="unfavorite-button" data-id="@e.Emoji.Id">
+                                    <i class="fas fa-star" aria-hidden="true"></i> &nbsp; Unfavorite
+                                </a>
+                            </div>
+                            <hr />
+                        </div>
+                        <div class="card-image">
+                            <img src="@e.Emoji.ImageUrl" alt="@e.Emoji.ImageUrl (INVALID IMAGE)" style="display: block; padding: 8%; margin: 0 auto; height: 128px;">
+                        </div>
+                        <footer class="card-footer" style="margin-top: auto;">
+                            <a href="@e.Emoji.GenerateSlug()" download="@e.Emoji.Name@e.Emoji.Extension" class="card-footer-item"><i class="far fa-save"></i> &nbsp; Save</a>
+                            <a href="/details/@e.Emoji.Id" class="card-footer-item"> <i class="far fa-file-alt"></i> &nbsp; Details</a>
+                        </footer>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}
+else
+{
+    <p class="subtitle">You do not have any favorites.</p>
+}

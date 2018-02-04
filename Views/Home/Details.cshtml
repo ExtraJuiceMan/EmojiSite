@@ -1,0 +1,139 @@
+﻿
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    EmojiInfo e = (EmojiInfo)ViewData["Emoji"];
+    List<CommentInfo> comments = ViewData["Comments"] as List<CommentInfo>;
+    bool isFavorited = (bool)ViewData["Favorited"];
+    string message = (string)TempData["Message"];
+}
+
+<div class="section">
+<div class="container">
+    <div class="columns">
+        <div class="column is-one-quarter">
+            <div class="card">
+                <div class="card-image">
+                    <figure class="image">
+                        <img src="@e.Emoji.GenerateSlug()" alt="@e.Emoji.Name" style="display: block; padding: 15%; margin: 0 auto; max-width: 300px;">
+                    </figure>
+                </div>
+                <div class="card-content">
+                    <div class="media">
+                        <div class="media-content hide-scrollbar" style="word-wrap: break-word;">
+                            <p class="title is-4">:@e.Emoji.Name:</p>
+                            <p class="subtitle is-6">by @e.Author.Username</p>
+                        </div>
+                    </div>
+                    <div class="content" style="word-wrap: break-word;">
+                        <p class="subtitle is-6"><b>Tags:</b>
+                            <div class="tags">
+                                @foreach (string t in e.Emoji.TagsToArray())
+                                {
+                                    <span class="tag">
+                                        @t
+                                    </span>
+                                }
+                            </div>
+                        </p>
+                        <p class="subtitle is-6"><b>Description:</b>
+                        @e.Emoji.Description</p>
+                        <p class="subtitle is-6"><b>Submitted:</b> <time>@e.Emoji.Submitted</time></p>
+                    </div>
+                </div>
+                <footer class="card-footer" style="margin-top: auto;">
+                    <a href="@e.Emoji.GenerateSlug()" download="@e.Emoji.Name@e.Emoji.Extension" class="card-footer-item"> <i class="far fa-save"></i> &nbsp; Save</a>
+                    <a href="@(User.Identity.IsAuthenticated ? "#" : "/login")" class="@(User.Identity.IsAuthenticated ? "favorite-button" : "") card-footer-item" data-id="@e.Emoji.Id"> <i class="@(isFavorited ? "fas" : "far") fa-star"></i> &nbsp; Favorite (<span>@e.Favorites</span>)</a>
+
+                </footer>
+            </div>
+        </div>
+        <div class="column">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <article class="media">
+                    <figure class="media-left">
+                        @if (User.FindFirstValue("urn:discord:avatar") != null)
+                        {
+                            <p class="image is-64x64">
+                                <img src="https://cdn.discordapp.com/avatars/@User.FindFirstValue(ClaimTypes.NameIdentifier)/@(User.FindFirstValue("urn:discord:avatar")).png">
+                            </p>
+
+                        }
+                        else
+                        {   <p class="image is-64x64">
+                            <img src="~/images/discord-logo.png">
+                        </p>
+                        }
+                    </figure>
+                    <div class="media-content">
+                        <form asp-action="comment" method="POST">
+                            <input type="hidden" name="id" value="@e.Emoji.Id" />
+                            @Html.AntiForgeryToken()
+                            <div class="field">
+                                <p class="control">
+                                    <textarea class="textarea" name="content" placeholder="Your comment here"></textarea>
+                                </p>
+                            </div>
+                            <nav class="level">
+                                <div class="level-left">
+                                </div>
+                                <div class="level-right">
+                                    <div class="level-item">
+                                        <button type="submit" name="Submit" class="button is-info">Submit</button>
+                                    </div>
+                                </div>
+                            </nav>
+                        </form>
+                    </div>
+                </article>
+            }
+            @if (message != null)
+            {
+                <p class="is-size-5">@message</p>
+            }
+            <div style="padding-left: 1%;">
+                <p class="title">Comments</p>
+                @if (comments.Count != 0)
+                {
+                    foreach (CommentInfo c in comments)
+                    {
+                        <article class="media">
+                            <figure class="media-left">
+                                <p class="image is-64x64">
+                                    @{ 
+                                        string avatarUrl = c.Author.Avatar == null ? "/images/discord-logo.png"
+                                            : $"https://cdn.discordapp.com/avatars/{c.Author.UserId}/{c.Author.Avatar}.png";
+                                    }
+                                    <img src="@avatarUrl" onerror="this.src = '/images/discord-logo.png'; this.onerror = null">
+                                </p>
+                            </figure>
+                            <div class="media-content hide-scrollbar">
+                                <div class="content">
+                                    <p>
+                                        <strong>@c.Author.Username#@c.Author.Discriminator</strong>
+                                        <small>(@c.Comment.AuthorId)</small> | <small>@c.Comment.Submitted</small>
+                                        <br>
+                                        @c.Comment.Content
+                                    </p>
+                                </div>
+                                <nav class="level is-mobile">
+                                    <div class="level-left">
+                                        <a class="level-item">
+                                        </a>
+                                    </div>
+                                </nav>
+                            </div>
+                        </article>
+                    }
+                }
+                else
+                {
+                    <h1 class="is-4">We didn't find any comments here!</h1>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+    </div>

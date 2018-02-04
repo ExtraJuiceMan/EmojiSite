@@ -1,0 +1,74 @@
+﻿
+@{
+    ViewData["Title"] = "Approval";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<EmojiRow> emojis = (List<EmojiRow>)ViewData["Emojis"];
+}
+
+<div class="container">
+    <h1 class="title">Approval</h1>
+    <h2 class="subtitle">Welcome back.</h2>
+    @{ 
+        string message = TempData["Message"] as string;
+        if (message != null)
+        {
+            <p>@message</p>
+        }
+    }
+    <br />
+    <div class="column">
+        @foreach (EmojiRow r in emojis)
+        {
+            <div class="columns">
+                @foreach (EmojiInfo e in r.Row)
+                {
+                    <div class="column is-one-quarter">
+                        <div class="card">
+                            <header class="card-header">
+                                <p class="card-header-title">
+                                    :@e.Emoji.Name:
+                                </p>
+                                <a href="#" class="card-header-icon info-button" aria-label="details">
+                                    <span class="icon">
+                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                    </span>
+                                </a>
+                            </header>
+                            <div class="card-content collapsed-content">
+                                <div class="content is-size-7">
+                                    Author: <b>@e.Author.Username#@e.Author.Discriminator</b>
+                                    <br />
+                                    Tags: @e.Emoji.Tags
+                                    <br />
+                                    Description: @e.Emoji.Description
+                                </div>
+                                <hr />
+                            </div>
+                            <div class="card-image">
+                                <img src="@e.Emoji.ImageUrl" alt="@e.Emoji.ImageUrl (INVALID IMAGE)" style="display: block; padding: 8%; margin: 0 auto; height: 128px;">
+                            </div>
+                            <footer class="card-footer" style="margin-top: auto;">
+                                <a href="javascript:{}" onclick="document.getElementById('approve-@(e.Emoji.Id)').submit();" class="card-footer-item has-text-success"> <i class="fas fa-check"></i> &nbsp; Approve</a>
+                                <a href="javascript:{}" onclick="document.getElementById('deny-@(e.Emoji.Id)').submit();" type="submit" name="Submit" class="card-footer-item has-text-danger"> <i class="fas fa-ban"></i> &nbsp; Deny</a>
+
+                                <form asp-controller="Home" asp-action="ApproveEmoji" method="POST" id="deny-@(e.Emoji.Id)" style="display: inline-flex">
+                                    <input type="hidden" name="id" value="@e.Emoji.Id"><br>
+                                    <input type="hidden" name="type" value="deny"><br>
+                                    @Html.AntiForgeryToken()
+                                </form>
+                                <form asp-controller="Home" asp-action="ApproveEmoji" method="POST" id="approve-@(e.Emoji.Id)" style="display: inline-flex">
+                                    <input type="hidden" name="id" value="@e.Emoji.Id"><br>
+                                    <input type="hidden" name="type" value="approve"><br>
+                                    @Html.AntiForgeryToken()
+                                </form>
+                            </footer>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+
+

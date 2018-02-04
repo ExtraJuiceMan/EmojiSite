@@ -1,0 +1,8 @@
+﻿.collapsed-content 
+{
+    display: none;
+}
+.hide-scrollbar
+{
+    overflow-y: hidden;
+}

@@ -1,0 +1,135 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    List<EmojiRow> emojis = (List<EmojiRow>)ViewData["Emojis"];
+    List<int> userFavorites = (List<int>)ViewData["UserFavorites"];
+}
+<section class="section is-medium has-text-centered">
+    <div class="container">
+        <h1 class="title">
+            EmojiSite
+        </h1>
+        <p class="subtitle">
+            Browse dozens of free to use emojis! Totally original, and not a copy of some other site.
+        </p>
+    </div>
+</section>
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="column is-one-quarter">
+                <form asp-action="index" method="GET" id="search">
+                    <input id="tagList" type="hidden" name="tags" value="" />
+                    <input id="searchTerm" type="hidden" name="keyword" value="" />
+                    <input id="orderBy" type="hidden" name="orderBy" value="" />
+                    <input id="order" type="hidden" name="orderType" value="" />
+
+                </form>
+                <nav class="panel">
+                    <p class="panel-heading">
+                        Tags
+                    </p>
+                    <div class="panel-block">
+                        <p class="control has-icons-left">
+                            <input id="searchInput" class="input is-small" type="text" placeholder="search">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-search"></i>
+                            </span>
+                        </p>
+                    </div>
+                    <div class="panel-block">
+                        <p>Sort By: &nbsp;</p>
+                        <select id="orderAttribute" name="">
+                            <option value="submitted">Submitted</option>
+                            <option value="favorites">Favorites</option>
+                        </select> 
+                        <select id="orderType" name="">
+                            <option value="desc">Descending</option>
+                            <option value="asc">Ascending</option>
+                        </select> 
+                    </div>
+                    <div id="tagList">
+                        @foreach (String s in ViewData["Tags"] as List<string>)
+                        {
+                            <a class="panel-block emoji-tag" data-name="@s">
+                                <span class="panel-icon">
+                                    <i class="fas fa-tag"></i>
+                                </span>
+                                @s.Replace('_', ' ')
+                            </a>
+                        }
+                    </div>
+                    <div class="panel-block">
+                        <div class="buttons has-addons">
+                            <button id="resetButton" class="button is-link is-outlined">
+                                Reset Tags
+                            </button>
+                            <button id="submitButton" class="button is-link is-outlined">
+                                Search
+                            </button>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <div class="column">
+                @if (emojis.Count != 0)
+                {
+                    foreach (EmojiRow r in emojis)
+                    {
+                        <div class="columns">
+                            @foreach (EmojiInfo e in r.Row)
+                            {
+                                <div class="column is-one-quarter">
+                                    <div class="card">
+                                        <header class="card-header">
+                                            <p class="card-header-title" style="font-size: @if (e.Emoji.Name.Length > 24) {<text>.65</text> }
+                                            else if (e.Emoji.Name.Length > 16) { <text>.85</text> }
+                                            else {<text>.9</text> }em ">
+                                                :@e.Emoji.Name:
+                                            </p>
+                                            <a href="#" class="card-header-icon info-button" aria-label="open details">
+                                                <span class="icon">
+                                                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                                </span>
+                                            </a>
+
+                                        </header>
+                                        <div class="card-content collapsed-content">
+                                            <div class="content is-size-7">
+                                                Author: <b>@e.Author.Username</b>
+                                                <br />
+                                                Tags:
+                                                <div class="tags">
+                                                    @foreach (string t in e.Emoji.TagsToArray())
+                                                    {
+                                                        <span class="tag">
+                                                            @t
+                                                        </span>
+                                                    }
+                                                </div>
+                                                <a href="@(User.Identity.IsAuthenticated ? "#" : "/login")" class="@(User.Identity.IsAuthenticated ? "favorite-button" : "")" data-id="@e.Emoji.Id">
+                                                <i class="@(userFavorites.Contains(e.Emoji.Id) ? "fas" : "far") fa-star" aria-hidden="true"></i> &nbsp; Favorite (<span>@e.Favorites</span>)
+                                                </a>
+                                            </div>
+                                            <hr />
+                                        </div>
+                                        <div class="card-image">
+                                            <img src="@e.Emoji.GenerateSlug()" alt="@e.Emoji.Name" style="display: block; padding: 8%; margin: 0 auto; height: 128px;">
+                                        </div>
+                                        <footer class="card-footer" style="margin-top: auto;">
+                                            <a href="@e.Emoji.GenerateSlug()" download="@e.Emoji.Name@e.Emoji.Extension" class="card-footer-item"><i class="far fa-save"></i> &nbsp; Save</a>
+                                            <a href="/details/@e.Emoji.Id" class="card-footer-item"> <i class="far fa-file-alt"></i> &nbsp; Details</a>
+                                        </footer>
+                                    </div>
+                                </div>
+                                }
+                        </div>
+                        }
+                }
+                else
+                {
+                    <p class="is-size-5">We didn't find any emojis matching your parameters.</p>
+                }
+            </div>
+        </div>
+    </div>
+</section>
