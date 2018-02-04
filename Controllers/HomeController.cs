@@ -193,7 +193,7 @@ namespace EmojiSite.Controllers
                 return RedirectToAction("submit");
             }
 
-            Regex r = new Regex("^[a-zA-Z0-9-]*$");
+            Regex r = new Regex("^[a-zA-Z0-9_]*$");
 
             if (!r.IsMatch(name) || name.Length > 32 || name.Length < 3)
             {
