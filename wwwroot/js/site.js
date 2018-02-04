@@ -88,7 +88,7 @@ function updateSearchBox() {
             $(this).attr("selected", "selected")
     })
     $("#orderType").children("option").each(function () {
-        if ($(this).attr("value") == orderType)
+        if ($(this).attr("value") == order)
             $(this).attr("selected", "selected")
     })
 }
