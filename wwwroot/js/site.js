@@ -84,13 +84,13 @@ function updateSearchBox() {
     var order = getParameterByName("orderType");
 
     $("#orderAttribute").children("option").each(function () {
-        if ($(this).attr("value") == orderBy)
-            $(this).attr("selected", "selected")
-    })
+        if ($(this).attr("value") === orderBy)
+            $(this).attr("selected", "selected");
+    });
     $("#orderType").children("option").each(function () {
-        if ($(this).attr("value") == order)
-            $(this).attr("selected", "selected")
-    })
+        if ($(this).attr("value") === order)
+            $(this).attr("selected", "selected");
+    });
 }
 
 function resetTags() {

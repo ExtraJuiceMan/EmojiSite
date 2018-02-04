@@ -38,14 +38,19 @@
                     </div>
                     <div class="panel-block">
                         <p>Sort By: &nbsp;</p>
-                        <select id="orderAttribute" name="">
-                            <option value="submitted">Submitted</option>
-                            <option value="favorites">Favorites</option>
-                        </select> 
-                        <select id="orderType" name="">
-                            <option value="desc">Descending</option>
-                            <option value="asc">Ascending</option>
-                        </select> 
+                        <div class="select is-small">
+                            <select id="orderAttribute" name="">
+                                <option value="submitted">Submitted</option>
+                                <option value="favorites">Favorites</option>
+                            </select>
+                        </div>
+                        &nbsp;
+                        <div class="select is-small">
+                            <select id="orderType" name="">
+                                <option value="desc">Descending</option>
+                                <option value="asc">Ascending</option>
+                            </select>
+                        </div>
                     </div>
                     <div id="tagList">
                         @foreach (String s in ViewData["Tags"] as List<string>)
@@ -107,7 +112,7 @@
                                                     }
                                                 </div>
                                                 <a href="@(User.Identity.IsAuthenticated ? "#" : "/login")" class="@(User.Identity.IsAuthenticated ? "favorite-button" : "")" data-id="@e.Emoji.Id">
-                                                <i class="@(userFavorites.Contains(e.Emoji.Id) ? "fas" : "far") fa-star" aria-hidden="true"></i> &nbsp; Favorite (<span>@e.Favorites</span>)
+                                                    <i class="@(userFavorites.Contains(e.Emoji.Id) ? "fas" : "far") fa-star" aria-hidden="true"></i> &nbsp; Favorite (<span>@e.Favorites</span>)
                                                 </a>
                                             </div>
                                             <hr />
@@ -121,9 +126,9 @@
                                         </footer>
                                     </div>
                                 </div>
-                                }
+                            }
                         </div>
-                        }
+                    }
                 }
                 else
                 {

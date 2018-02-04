@@ -413,9 +413,9 @@ namespace EmojiSite.Controllers
         }
 
         [Route("login")]
-        public IActionResult Login(string returnUrl = "/process-user")
+        public IActionResult Login()
         {
-            return Challenge(new AuthenticationProperties() { RedirectUri = returnUrl });
+            return Challenge(new AuthenticationProperties() { RedirectUri = "/process-user" });
         }
 
         [Route("logout")]
