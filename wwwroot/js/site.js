@@ -149,4 +149,4 @@ function loadEvent() {
 
     updateSearchBox();
 }
-window.addEventListener("load", loadEvent);
+$(document).ready(loadEvent)
